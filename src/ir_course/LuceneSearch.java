@@ -28,6 +28,7 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.ClassicSimilarity;
+import org.apache.lucene.search.similarities.LMDirichletSimilarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.tartarus.snowball.ext.PorterStemmer;
@@ -35,6 +36,8 @@ import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
+
+import ir_course.Main.RankingMethod;
 
 public class LuceneSearch {
 
@@ -108,9 +111,9 @@ public class LuceneSearch {
         return sb.toString();
 	}
 
-	public Query buildQuery(String query_s, boolean usePorter, boolean useStopWords) throws IOException {
+	public Query buildQuery(String query_s, boolean usePorter, boolean removeStopWords) throws IOException {
 		// build query
-		if (useStopWords) {
+		if (removeStopWords) {
 			query_s = removeStopWords(query_s);
 		}
 		List<String> queryVector = Arrays.asList(query_s.toLowerCase().split(" "));
@@ -147,23 +150,26 @@ public class LuceneSearch {
 		return query.build();
 	}
 
-	public List<DocumentInCollection> search(String s, int hitNumber, boolean isBM25) throws IOException {
+	public List<DocumentInCollection> search(String s, int hitNumber, RankingMethod rankingMethod, boolean usePorter, boolean removeStopWords) throws IOException {
 
 		List<DocumentInCollection> results = new LinkedList<DocumentInCollection>();
 
 		// implement the Lucene search here
 
-		Query query = buildQuery(s, true, true);
+		Query query = buildQuery(s, usePorter, removeStopWords);
 
 		// search
 		DirectoryReader ireader = DirectoryReader.open(index);
 		IndexSearcher isearcher = new IndexSearcher(ireader);
-		if(!isBM25){
+		if(rankingMethod == RankingMethod.BM25){
 			//BM25
 			isearcher.setSimilarity(new BM25Similarity());
-		}else{
+		}else if (rankingMethod == RankingMethod.VSM){
 			//VSM
 			isearcher.setSimilarity(new ClassicSimilarity());
+		}else {
+			// Language model with Dirichlet similarity, u=2000
+			isearcher.setSimilarity(new LMDirichletSimilarity());
 		}
 		
 		

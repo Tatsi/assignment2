@@ -3,16 +3,21 @@ package ir_course;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import ir_course.Main.RankingMethod;
 
 public class PrecisionRecallCurve {
 
 	public static final int POINT_COUNT = 11;
 	private static final int LIMIT = 1000;
 
-	boolean isBM25 = false;
+	private RankingMethod rankingMethod;
+	private boolean usePorter;
+	private boolean removeStopWords;
 
-	public PrecisionRecallCurve(boolean isBM25) {
-		this.isBM25 = isBM25;
+	public PrecisionRecallCurve(RankingMethod rm, boolean usePorter, boolean removeStopWords) {
+		this.rankingMethod = rm;
+		this.usePorter = usePorter;
+		this.removeStopWords = removeStopWords;
 	}
 
 	// what is relevant and what is not?
@@ -62,7 +67,7 @@ public class PrecisionRecallCurve {
 		try {
 			searchApp.index(docs);
 			//do the search and get all results
-			List<DocumentInCollection> results = searchApp.search(query, LIMIT, isBM25); 
+			List<DocumentInCollection> results = searchApp.search(query, LIMIT, this.rankingMethod, this.usePorter, this.removeStopWords); 
 			//find total number of relevant items
 			int totalRelevant = 0;
 			for (DocumentInCollection doc : results) {
