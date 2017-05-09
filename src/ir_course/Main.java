@@ -65,9 +65,11 @@ public class Main {
 		List<Float> points_3d = prcurve_3d.calculateCurve(docs);
 		
 		System.out.println(""); System.out.println("");
-		System.out.println("1a,1b,1c,1d,2a,2b,2c,2d,3a,3b,3c,3d");
+		System.out.println("Recall,1a,1b,1c,1d,2a,2b,2c,2d,3a,3b,3c,3d");
 		
 		for(int i=0;i<PrecisionRecallCurve.POINT_COUNT;i++){
+			System.out.print(i/10.0 + ",");
+			
 			System.out.print(points_1a.get(i) + ",");
 			System.out.print(points_1b.get(i) + ",");
 			System.out.print(points_1c.get(i) + ",");
