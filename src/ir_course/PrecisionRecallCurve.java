@@ -42,6 +42,7 @@ public class PrecisionRecallCurve {
 		// TODO add the queries
 		queries.add("Automatic or semiautomatic video tagging");
 		queries.add("Content based video annotation");
+		queries.add("feature based Multimedia annotation");
 
 		for (String query : queries) {
 			List<Float> queryPoints = getPrecisions(docs, query);
