@@ -58,7 +58,8 @@ public class LuceneSearch {
 	public void index(List<DocumentInCollection> docs) throws IOException {
 
 		// implement the Lucene indexing here
-		StandardAnalyzer analyzer = new StandardAnalyzer();
+		// Index also the stop words and remove later from query if needed
+		StandardAnalyzer analyzer = new StandardAnalyzer(CharArraySet.EMPTY_SET);
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
 
 		IndexWriter writer;
@@ -118,6 +119,8 @@ public class LuceneSearch {
 		}
 		List<String> queryVector = Arrays.asList(query_s.toLowerCase().split(" "));
 		BooleanQuery.Builder query = new BooleanQuery.Builder();
+
+		// Next part limits the search to a specific TASK_NUMBER
 		//Query exactQuery = IntPoint.newExactQuery(I_SEARCH_TASK_NUMBER, TASK_NUMBER);
 		//query.add(exactQuery, Occur.MUST);
 		
