@@ -21,7 +21,6 @@ public class PrecisionRecallCurve {
 	}
 
 	// what is relevant and what is not?
-	// what is relevant and what is not?
 	private boolean isRelevant(DocumentInCollection doc, String query) {
 		return doc.isRelevant();
 	}
@@ -36,7 +35,7 @@ public class PrecisionRecallCurve {
 		List<String> queries = new ArrayList<String>();
 
 		// add some queries
-		// TODO add the queries
+		// TODO our own query
 		queries.add("Automatic or semiautomatic video tagging");
 		queries.add("Content based video annotation");
 		queries.add("feature based Multimedia annotation");
