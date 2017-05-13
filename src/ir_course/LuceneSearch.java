@@ -46,14 +46,14 @@ public class LuceneSearch {
 	private Directory index;
 	private static final String TITLE = "title";
 	private static final int TASK_NUMBER = 3;
-	private static final String I_SEARCH_TASK_NUMBER = "irelevancy"; //for indexing
+	private static final String I_SEARCH_TASK_NUMBER = "isearchTaskNumber"; //for indexing
 	private static final String SEARCH_TASK_NUMBER = "searchTaskNumber"; //for storing
-	private static final String I_RELEVANCY = "isearchTaskNumber"; //for indexing
+	private static final String I_RELEVANCY = "iRelevancy"; //for indexing
 	private static final String RELEVANCY = "relevancy"; //for storing
 
 	public LuceneSearch() {
 		index = new RAMDirectory();
-	}
+	}	
 
 	public void index(List<DocumentInCollection> docs) throws IOException {
 
@@ -118,8 +118,8 @@ public class LuceneSearch {
 		}
 		List<String> queryVector = Arrays.asList(query_s.toLowerCase().split(" "));
 		BooleanQuery.Builder query = new BooleanQuery.Builder();
-		Query exactQuery = IntPoint.newExactQuery(I_SEARCH_TASK_NUMBER, TASK_NUMBER);
-		query.add(exactQuery, Occur.MUST);
+		//Query exactQuery = IntPoint.newExactQuery(I_SEARCH_TASK_NUMBER, TASK_NUMBER);
+		//query.add(exactQuery, Occur.MUST);
 		
 		PorterStemmer stemmer = new PorterStemmer();
 		

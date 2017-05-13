@@ -9,6 +9,7 @@ public class PrecisionRecallCurve {
 
 	public static final int POINT_COUNT = 11;
 	private static final int LIMIT = 1000;
+	private static final int TASK_NUMBER = 3;
 
 	private RankingMethod rankingMethod;
 	private boolean usePorter;
@@ -21,8 +22,10 @@ public class PrecisionRecallCurve {
 	}
 
 	// what is relevant and what is not?
+	// Now a doc is relevant if it has been marked as relevant AND 
+	// it belongs to our comparison scenario (TASK_NUMBER)
 	private boolean isRelevant(DocumentInCollection doc, String query) {
-		return doc.isRelevant();
+		return (doc.isRelevant() && doc.getSearchTaskNumber() == TASK_NUMBER);
 	}
 
 	// find 11 point precisions for multiple queries as average
