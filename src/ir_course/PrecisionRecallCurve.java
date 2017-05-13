@@ -21,12 +21,9 @@ public class PrecisionRecallCurve {
 	}
 
 	// what is relevant and what is not?
+	// what is relevant and what is not?
 	private boolean isRelevant(DocumentInCollection doc, String query) {
-		if (doc.getQuery().equals(query) && doc.isRelevant()) {
-			return true;
-		} else {
-			return false;
-		}
+		return doc.isRelevant();
 	}
 
 	// find 11 point precisions for multiple queries as average
