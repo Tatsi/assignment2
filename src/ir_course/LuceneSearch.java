@@ -40,7 +40,6 @@ import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import ir_course.Main.RankingMethod;
 
 public class LuceneSearch {
-
 	private static final String QUERY = "query";
 	private static final String ABSTRACT_TEXT = "abstractText";
 	private Directory index;
@@ -51,7 +50,12 @@ public class LuceneSearch {
 	private static final String I_RELEVANCY = "iRelevancy"; //for indexing
 	private static final String RELEVANCY = "relevancy"; //for storing
 
-	public LuceneSearch() {
+	private boolean usePorter;
+	private boolean removeStopWords;
+
+	public LuceneSearch(boolean usePorter, boolean removeStopWords) {
+		this.usePorter = usePorter;
+		this.removeStopWords = removeStopWords;
 		index = new RAMDirectory();
 	}	
 
@@ -112,9 +116,9 @@ public class LuceneSearch {
         return sb.toString();
 	}
 
-	public Query buildQuery(String query_s, boolean usePorter, boolean removeStopWords) throws IOException {
+	public Query buildQuery(String query_s) throws IOException {
 		// build query
-		if (removeStopWords) {
+		if (this.removeStopWords) {
 			query_s = removeStopWords(query_s);
 		}
 		List<String> queryVector = Arrays.asList(query_s.toLowerCase().split(" "));
@@ -128,24 +132,14 @@ public class LuceneSearch {
 		
 		if (queryVector != null) {
 			for (String s : queryVector) {
-				if (usePorter) {
+				if (this.usePorter) {
 					stemmer.setCurrent(s);
 					stemmer.stem();
 					s = stemmer.getCurrent();
 				}
 				TermQuery termQ = new TermQuery(new Term(TITLE, s));
 				query.add(termQ, Occur.SHOULD);
-			}
-		}
-		
-		if (queryVector != null) {
-			for (String s : queryVector) {
-				TermQuery termQ = new TermQuery(new Term(ABSTRACT_TEXT, s));
-				if (usePorter) {
-					stemmer.setCurrent(s);
-					stemmer.stem();
-					s = stemmer.getCurrent();
-				}
+				termQ = new TermQuery(new Term(ABSTRACT_TEXT, s));
 				query.add(termQ, Occur.SHOULD);
 			}
 		}
@@ -153,13 +147,13 @@ public class LuceneSearch {
 		return query.build();
 	}
 
-	public List<DocumentInCollection> search(String s, int hitNumber, RankingMethod rankingMethod, boolean usePorter, boolean removeStopWords) throws IOException {
+	public List<DocumentInCollection> search(String s, int hitNumber, RankingMethod rankingMethod) throws IOException {
 
 		List<DocumentInCollection> results = new LinkedList<DocumentInCollection>();
 
 		// implement the Lucene search here
 
-		Query query = buildQuery(s, usePorter, removeStopWords);
+		Query query = buildQuery(s);
 
 		// search
 		DirectoryReader ireader = DirectoryReader.open(index);
@@ -174,7 +168,6 @@ public class LuceneSearch {
 			// Language model with Dirichlet similarity, u=2000
 			isearcher.setSimilarity(new LMDirichletSimilarity());
 		}
-		
 		
 		ScoreDoc[] hits = isearcher.search(query, hitNumber).scoreDocs;
 
@@ -194,11 +187,10 @@ public class LuceneSearch {
 			doc.setSearchTaskNumber(Integer.parseInt(hitDoc.get(SEARCH_TASK_NUMBER)));
 			results.add(doc);
 			
-			System.out.print(hitDoc.get(TITLE));
-			System.out.println(" - " + hits[i].score);
+			// System.out.print(hitDoc.get(TITLE));
+			// System.out.println(" - " + hits[i].score);
 		}
 
 		return results;
 	}
-
 }

@@ -63,11 +63,11 @@ public class PrecisionRecallCurve {
 	// find 11 point precisions for a query
 	private List<Float> getPrecisions(List<DocumentInCollection> docs, String query) {
 		List<Float> precisions = new ArrayList<Float>(); //interpolated precisions for 11 points
-		LuceneSearch searchApp = new LuceneSearch();
+		LuceneSearch searchApp = new LuceneSearch(this.usePorter, this.removeStopWords);
 		try {
 			searchApp.index(docs);
 			//do the search and get all results
-			List<DocumentInCollection> results = searchApp.search(query, LIMIT, this.rankingMethod, this.usePorter, this.removeStopWords); 
+			List<DocumentInCollection> results = searchApp.search(query, LIMIT, this.rankingMethod); 
 			//find total number of relevant items
 			int totalRelevant = 0;
 			for (DocumentInCollection doc : results) {
