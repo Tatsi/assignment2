@@ -122,9 +122,9 @@ public class LuceneSearch {
 
 	public Query buildQuery(String query_s) throws IOException {
 		// build query
-		if (this.removeStopWords) {
-			query_s = removeStopWords(query_s);
-		}
+		//if (this.removeStopWords) {
+		//	query_s = removeStopWords(query_s);
+		//}
 		List<String> queryVector = Arrays.asList(query_s.toLowerCase().split(" "));
 		BooleanQuery.Builder query = new BooleanQuery.Builder();
 
