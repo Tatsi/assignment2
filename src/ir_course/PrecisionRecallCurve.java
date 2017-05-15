@@ -6,9 +6,8 @@ import java.util.List;
 import ir_course.Main.RankingMethod;
 
 public class PrecisionRecallCurve {
-
 	public static final int POINT_COUNT = 11;
-	private static final int LIMIT = 1000;
+	private static final int LIMIT = 10000;
 	private static final int TASK_NUMBER = 3;
 
 	private RankingMethod rankingMethod;
@@ -42,6 +41,7 @@ public class PrecisionRecallCurve {
 		queries.add("Content based video annotation");
 		queries.add("feature based Multimedia annotation");
 		queries.add("Models and techniques used for video tagging or annotation");
+		queries.add("If a Video tagger makes then more of these annotations");
 
 		for (String query : queries) {
 			List<Float> queryPoints = getPrecisions(docs, query);
@@ -49,7 +49,6 @@ public class PrecisionRecallCurve {
 			for (int i = 0; i < POINT_COUNT; i++) {
 				points.set(i, points.get(i) + queryPoints.get(i));
 			}
-
 		}
 
 		for (int i = 0; i < POINT_COUNT; i++) {
@@ -78,7 +77,6 @@ public class PrecisionRecallCurve {
 			
 			//find precision-recall pairings
 			List<PRPoint> prpoints = calculatePrPoints(results,query,totalRelevant);
-			
 
 			for (int i = 0; i < POINT_COUNT; i++) {
 				float recall = i * 0.1f;
@@ -112,7 +110,6 @@ public class PrecisionRecallCurve {
 			point.recall = tp/totalRelevant;
 			prpoints.add(point);
 		}
-		
 		
 		return prpoints;
 	}

@@ -60,6 +60,7 @@ public class LuceneSearch {
 		index = new RAMDirectory();
 	}	
 
+	// Build the index here. EnglishAnalyzer is used for Porter stemming. Otherwise normal StandardAnalyzer.
 	public void index(List<DocumentInCollection> docs) throws IOException {
 		Analyzer analyzer;
 		CharArraySet stopwords = CharArraySet.EMPTY_SET;
@@ -98,14 +99,14 @@ public class LuceneSearch {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 	
+	// Remove Stop words from the query. Has an effect when using with Language Model.
 	public static String removeStopWords(String queryStr) throws IOException {
 		StandardTokenizer tokenizer = new StandardTokenizer();
 		tokenizer.setReader(new StringReader(queryStr));
 		CharArraySet stopWords = EnglishAnalyzer.getDefaultStopSet();
-		
+
         TokenStream streamStop = new StopFilter(tokenizer, stopWords);
         StringBuilder sb = new StringBuilder();
         CharTermAttribute charTermAttribute = tokenizer.addAttribute(CharTermAttribute.class);
@@ -120,10 +121,10 @@ public class LuceneSearch {
 
         tokenizer.close();  
 
-
         return sb.toString();
 	}
 
+	// Build the search query and stem if needed
 	public Query buildQuery(String query_s) throws IOException {
 		// build query
 		if (this.removeStopWords) {
@@ -133,6 +134,8 @@ public class LuceneSearch {
 		BooleanQuery.Builder query = new BooleanQuery.Builder();
 
 		// Next part limits the search to a specific TASK_NUMBER
+		// Not in use, we scan the whole collection
+
 		//Query exactQuery = IntPoint.newExactQuery(I_SEARCH_TASK_NUMBER, TASK_NUMBER);
 		//query.add(exactQuery, Occur.MUST);
 		
@@ -155,15 +158,12 @@ public class LuceneSearch {
 		return query.build();
 	}
 
+	// Perform the actual search
 	public List<DocumentInCollection> search(String s, int hitNumber, RankingMethod rankingMethod) throws IOException {
-
 		List<DocumentInCollection> results = new LinkedList<DocumentInCollection>();
-
-		// implement the Lucene search here
 
 		Query query = buildQuery(s);
 
-		// search
 		DirectoryReader ireader = DirectoryReader.open(index);
 		IndexSearcher isearcher = new IndexSearcher(ireader);
 		if(rankingMethod == RankingMethod.BM25){
@@ -194,9 +194,6 @@ public class LuceneSearch {
 			
 			doc.setSearchTaskNumber(Integer.parseInt(hitDoc.get(SEARCH_TASK_NUMBER)));
 			results.add(doc);
-			
-			// System.out.print(hitDoc.get(TITLE));
-			// System.out.println(" - " + hits[i].score);
 		}
 
 		return results;
