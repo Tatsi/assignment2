@@ -61,9 +61,13 @@ public class LuceneSearch {
 
 	public void index(List<DocumentInCollection> docs) throws IOException {
 
-		// implement the Lucene indexing here
-		// Index also the stop words and remove later from query if needed
-		StandardAnalyzer analyzer = new StandardAnalyzer(CharArraySet.EMPTY_SET);
+		CharArraySet stopwords = CharArraySet.EMPTY_SET;
+		if (this.removeStopWords) {
+			stopwords = EnglishAnalyzer.getDefaultStopSet();
+		}
+		
+		StandardAnalyzer analyzer = new StandardAnalyzer(stopwords);
+		
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
 
 		IndexWriter writer;
