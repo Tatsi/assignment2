@@ -32,6 +32,7 @@ import org.apache.lucene.search.similarities.LMDirichletSimilarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.RAMDirectory;
 import org.tartarus.snowball.ext.PorterStemmer;
+import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.CharArraySet;
 import org.apache.lucene.analysis.StopFilter;
 import org.apache.lucene.analysis.TokenStream;
@@ -60,14 +61,17 @@ public class LuceneSearch {
 	}	
 
 	public void index(List<DocumentInCollection> docs) throws IOException {
-
+		Analyzer analyzer;
 		CharArraySet stopwords = CharArraySet.EMPTY_SET;
 		if (this.removeStopWords) {
 			stopwords = EnglishAnalyzer.getDefaultStopSet();
 		}
-		
-		StandardAnalyzer analyzer = new StandardAnalyzer(stopwords);
-		
+		if(this.usePorter) {
+			analyzer = new EnglishAnalyzer(stopwords);
+		} else {
+			analyzer = new StandardAnalyzer(stopwords);			
+		}
+
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
 
 		IndexWriter writer;
@@ -122,9 +126,9 @@ public class LuceneSearch {
 
 	public Query buildQuery(String query_s) throws IOException {
 		// build query
-		//if (this.removeStopWords) {
-		//	query_s = removeStopWords(query_s);
-		//}
+		if (this.removeStopWords) {
+			query_s = removeStopWords(query_s);
+		}
 		List<String> queryVector = Arrays.asList(query_s.toLowerCase().split(" "));
 		BooleanQuery.Builder query = new BooleanQuery.Builder();
 
