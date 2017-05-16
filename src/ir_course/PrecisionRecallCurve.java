@@ -20,8 +20,7 @@ public class PrecisionRecallCurve {
 		this.removeStopWords = removeStopWords;
 	}
 
-	// what is relevant and what is not?
-	// Now a doc is relevant if it has been marked as relevant AND 
+	// A doc is relevant if it has been marked as relevant AND 
 	// it belongs to our comparison scenario (TASK_NUMBER)
 	private boolean isRelevant(DocumentInCollection doc, String query) {
 		return (doc.isRelevant() && doc.getSearchTaskNumber() == TASK_NUMBER);
@@ -36,12 +35,14 @@ public class PrecisionRecallCurve {
 
 		List<String> queries = new ArrayList<String>();
 
-		// add some queries
+		// Queries from the document collection
 		queries.add("Automatic or semiautomatic video tagging");
 		queries.add("Content based video annotation");
 		queries.add("feature based Multimedia annotation");
+
+		// Our own queries
 		queries.add("Models and techniques used for video tagging or annotation");
-		queries.add("If a Video tagger makes then more of these annotations");
+		queries.add("If a Video tagger makes then more of these annotationals");
 
 		for (String query : queries) {
 			List<Float> queryPoints = getPrecisions(docs, query);
@@ -85,7 +86,6 @@ public class PrecisionRecallCurve {
 			}
 
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

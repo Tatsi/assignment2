@@ -12,6 +12,8 @@ import org.apache.lucene.analysis.standard.StandardFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.apache.lucene.util.Version;
 
+
+// Custom Analyzer class used in indexing
 public class MyAnalyzer extends Analyzer {
 	private boolean usePorter;
 	private boolean removeStopWords;

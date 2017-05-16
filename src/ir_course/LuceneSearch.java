@@ -61,17 +61,7 @@ public class LuceneSearch {
 	}	
 
 	public void index(List<DocumentInCollection> docs) throws IOException {
-		Analyzer analyzer;
-		CharArraySet stopwords = CharArraySet.EMPTY_SET;
-		if (this.removeStopWords) {
-			stopwords = EnglishAnalyzer.getDefaultStopSet();
-		}
-//		if(this.usePorter) {
-//			analyzer = new EnglishAnalyzer(stopwords);
-//		} else {
-//			analyzer = new StandardAnalyzer(stopwords);			
-//		}
-		analyzer = new MyAnalyzer(usePorter, removeStopWords);
+		Analyzer analyzer = new MyAnalyzer(usePorter, removeStopWords);
 
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
 
@@ -99,9 +89,9 @@ public class LuceneSearch {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 	
+	// Used for removing stop words from the query
 	public static String removeStopWords(String queryStr) throws IOException {
 		StandardTokenizer tokenizer = new StandardTokenizer();
 		tokenizer.setReader(new StringReader(queryStr));
@@ -121,7 +111,6 @@ public class LuceneSearch {
 
         tokenizer.close();  
 
-
         return sb.toString();
 	}
 
@@ -134,6 +123,7 @@ public class LuceneSearch {
 		BooleanQuery.Builder query = new BooleanQuery.Builder();
 
 		// Next part limits the search to a specific TASK_NUMBER
+		// Not in use as we consider the whole collection
 		//Query exactQuery = IntPoint.newExactQuery(I_SEARCH_TASK_NUMBER, TASK_NUMBER);
 		//query.add(exactQuery, Occur.MUST);
 		
@@ -157,14 +147,10 @@ public class LuceneSearch {
 	}
 
 	public List<DocumentInCollection> search(String s, int hitNumber, RankingMethod rankingMethod) throws IOException {
-
 		List<DocumentInCollection> results = new LinkedList<DocumentInCollection>();
-
-		// implement the Lucene search here
 
 		Query query = buildQuery(s);
 
-		// search
 		DirectoryReader ireader = DirectoryReader.open(index);
 		IndexSearcher isearcher = new IndexSearcher(ireader);
 		if(rankingMethod == RankingMethod.BM25){
@@ -195,11 +181,7 @@ public class LuceneSearch {
 			
 			doc.setSearchTaskNumber(Integer.parseInt(hitDoc.get(SEARCH_TASK_NUMBER)));
 			results.add(doc);
-			
-			// System.out.print(hitDoc.get(TITLE));
-			// System.out.println(" - " + hits[i].score);
 		}
-
 		return results;
 	}
 }
